@@ -11,8 +11,9 @@
 
 ## Fresh local verification
 
-- `npm test`: 398 tests passed, 0 failed.
-- `npm run check`: syntax check passed for 101 JavaScript files across `src`, `public`, `scripts`, and `test`.
+- Fresh rerun in the current working environment on 2026-10-29: `npm test` — 398 passed, 0 failed (20.7 seconds).
+- Fresh rerun on 2026-10-29: `npm run check` — syntax check passed for 101 JavaScript files across `src`, `public`, `scripts`, and `test`.
+- Runtime used for this rerun: Node.js v22.16.0, npm 10.9.2.
 - These are local execution results from the working release folder, not GitHub Actions results.
 
 ## GitHub source import status
