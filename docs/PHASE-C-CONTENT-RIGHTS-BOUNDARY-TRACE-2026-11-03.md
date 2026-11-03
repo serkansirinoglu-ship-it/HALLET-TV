@@ -11,6 +11,7 @@ Source archive SHA-256: `f9868afacc32a4d2a1a893e8bcc0c5ec3ccc9e2dd83864baefbfdfb
 - **Presenter playout** — staged queue and media delivery require presenter approval plus approved linked rights record, matching exact SHA-256/size/MIME, commercial-use evaluation, and revalidation immediately before streaming.
 - **Program-run-sheet player media** — requires approved plan, current segment match, running run sheet, approved rights/media asset, and fresh rights/hash validation; playback is authenticated and no-store.
 - **Takedown/expiry** — usage evaluation blocks takedown and expired records; streaming and pack paths re-evaluate at use time.
+- **Admin/reviewer presenter download (Patch 1)** — now also requires current approved same-byte rights, commercial/territory eligibility and hash verification; rights are checked again before sending and successful downloads are audit logged. Editorial approval alone no longer bypasses rights.
 
 ## Test evidence
 - `test/content-rights-registry.test.mjs`
@@ -19,7 +20,15 @@ Source archive SHA-256: `f9868afacc32a4d2a1a893e8bcc0c5ec3ccc9e2dd83864baefbfdfb
 - `test/presenter-rights-link-ui.test.mjs`
 - `npm run check`: 423 JavaScript files passed
 - `npm run smoke`: 41/41 passed
-- All 211 `test/*.test.mjs` files executed in bounded batches; all batch processes exited 0.
+- Focused rights/production pack suite: 40 tests passed after Patch 1.
+- All 211 `test/*.test.mjs` files had passed in bounded batches on the base source before Patch 1 (not a single monolithic invocation).
+
+## Patch 1 deliverables
+- Full isolated patched source ZIP: `HALLET-TV-v6.52.31-PATCH1-PRESENTER-DOWNLOAD-RIGHTS-SOURCE.zip`
+- Patch-only ZIP: `HALLET-TV-v6.52.31-PATCH1-PRESENTER-DOWNLOAD-RIGHTS.zip`
+- Full patched ZIP SHA-256: `8f50f0e5db7c9e1fde46a2ec864ae7a60f95908527a1f477a1f887fc971294b9`
+- Patch SHA-256: `fbe41476e477b3a63467bfe9d46b52f91acc6e0345bdca735a630ddee874e930`
+- This is a local isolated source patch; the app source is not yet merged into GitHub `main` or deployed.
 
 ## Remaining review (not a closure claim)
 - This is a code-path trace, not an independent legal/security audit.
