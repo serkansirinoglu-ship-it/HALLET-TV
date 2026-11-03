@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Isolated, synthetic disaster-recovery drill. Never accepts production paths."""
 from __future__ import annotations
-import argparse, hashlib, json, os, shutil, sqlite3, subprocess, tempfile
+import argparse, hashlib, json, shutil, sqlite3, subprocess, tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -56,8 +56,14 @@ def main():
         check("reject-invalid-signature",p.returncode!=0,"signature rejects altered manifest")
         damaged=work/"tampered.sqlite"; shutil.copy2(backup,damaged); damaged.write_bytes(damaged.read_bytes()+b"tamper")
         check("reject-tampered-backup",sha256(damaged)!=m["sha256"],"tampered backup hash differs")
-        p=run(["sqlite3",str(root/"no-such-db.sqlite"),"SELECT 1;"],root,evidence["commands"],"negative-forced-restore-failure")
-        check("restore-failure-observed",p.returncode!=0,"restore target failure is surfaced")
+        # Force a restore failure through Python's bundled SQLite API (no sqlite3 CLI dependency).
+        forced_failure=False
+        try:
+            sqlite3.connect(root/"missing-parent"/"restore.sqlite")
+        except sqlite3.OperationalError as exc:
+            forced_failure=True
+            evidence["commands"].append({"case":"negative-forced-restore-failure","command":"sqlite3.connect(nonexistent-parent)","exit_code":1,"stdout":"","stderr":str(exc)})
+        check("restore-failure-observed",forced_failure,"restore target failure is surfaced")
         evidence["checks"]=checks
         evidence["finished_at"]=datetime.now(timezone.utc).isoformat()
         evidence["result"]="PASS" if all(c["passed"] for c in checks) else "FAIL"
