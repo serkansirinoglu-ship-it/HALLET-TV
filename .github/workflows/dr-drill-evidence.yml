@@ -19,6 +19,8 @@ jobs:
           python-version: "3.12"
       - name: Verify OpenSSL availability
         run: openssl version
+      - name: Run CLI contract tests
+        run: python -m unittest discover -s tests -p 'test_dr_drill_evidence.py' -v
       - name: Run isolated synthetic DR drill
         run: python tools/dr-drill-evidence.py --evidence "$RUNNER_TEMP/dr-drill-evidence.json"
       - name: Validate evidence JSON
