@@ -1,0 +1,25 @@
+name: DR Drill Evidence CLI
+
+on:
+  push:
+    branches:
+      - core/v6.52.32-dr-drill-evidence
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-dr-drill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify OpenSSL availability
+        run: openssl version
+      - name: Run isolated synthetic DR drill
+        run: python tools/dr-drill-evidence.py --evidence "$RUNNER_TEMP/dr-drill-evidence.json"
+      - name: Validate evidence JSON
+        run: python -c "import json,sys; d=json.load(open(sys.argv[1])); assert d['result']=='PASS'; assert all(c['passed'] for c in d['checks']); print(f\"{len(d['checks'])} checks passed\")" "$RUNNER_TEMP/dr-drill-evidence.json"
